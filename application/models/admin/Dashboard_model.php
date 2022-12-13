@@ -52,7 +52,7 @@ class Dashboard_model extends CI_Model {
 
     public function get_active_doctors_count($doctor_id = FALSE) {
         $this->db->select('count(doctor_id) as doctor_count');
-        $this->db->from('doctors');
+        $this->db->from('doctors');        
         $this->db->where(array(
             'status' => '1',
             'archive_status' => '1',

@@ -187,6 +187,7 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
+        $this->db->group_by('a.excel_details_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -213,6 +214,7 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
+        $this->db->group_by('a.excel_details_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
