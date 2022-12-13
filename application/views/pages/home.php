@@ -33,7 +33,7 @@ $CI->load->model('receipt_model');
             echo form_open('home', $attributes);
             ?>
             <div class="mb-3">
-                <label for="student_reg_no" class="form-label">Registration No : </label>
+                <label for="student_reg_no" class="form-label">Registration No :: </label>
                 <input type="text" class="form-control" id="student_reg_no" name="student_reg_no" required="" placeholder="Registration No">
             </div>
             <div class="mb-3">
