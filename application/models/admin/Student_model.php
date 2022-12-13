@@ -158,7 +158,7 @@ class Student_model extends CI_Model
         $this->db->where(array(
             'status' => '1',
             'archive_status' => '1',
-            'studenthallticket_id' => $excelid,
+            'hallticket_excel_id' => $excelid,
         ));
         $this->db->group_by('fk_student_id');
         $query = $this->db->get();
@@ -172,22 +172,19 @@ class Student_model extends CI_Model
     public function get_all_uploaded_excel_data()
     {
         $slt_ary = array(
-            'a.excel_details_id',
-            'a.orig_name',
-            'a.file_name',
-            'a.file_size',
-            'a.sent_count',
-            'a.created_date as uploaded_date',
-            'COUNT(b.receipt_id) as receipt_count',
+            'excel_details_id',
+            'orig_name',
+            'file_name',
+            'file_size',
+            'sent_count',
+            'created_date as uploaded_date',
         );
         $this->db->select($slt_ary);
-        $this->db->from('excel_details as a');
-        $this->db->join('receipt as b', 'b.fk_excel_id=a.excel_details_id', 'left');
+        $this->db->from('excel_details');
         $this->db->where(array(
-            'a.status' => '1',
-            'a.archive_status' => '1',
+            'status' => '1',
+            'archive_status' => '1',
         ));
-        $this->db->group_by('a.excel_details_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -199,22 +196,59 @@ class Student_model extends CI_Model
     public function get_all_uploaded_hallticketexcel_data()
     {
         $slt_ary = array(
-            'a.excel_details_id',
-            'a.orig_name',
-            'a.file_name',
-            'a.file_size',
-            'a.sent_count',
-            'a.created_date as uploaded_date',
-            'COUNT(b.studenthallticket_id) as studenthallticket_count',
+            'excel_details_id',
+            'orig_name',
+            'file_name',
+            'file_size',
+            'sent_count',
+            'created_date as uploaded_date',
         );
         $this->db->select($slt_ary);
-        $this->db->from('hallticketexcel_details as a');
-        $this->db->join('studenthallticket as b', 'b.hallticket_excel_id=a.excel_details_id', 'left');
+        $this->db->from('hallticketexcel_details');
         $this->db->where(array(
-            'a.status' => '1',
-            'a.archive_status' => '1',
+            'status' => '1',
+            'archive_status' => '1',
         ));
-        $this->db->group_by('a.excel_details_id');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_totalhallticket_count($hallticketexcel_id)
+    {
+        $slt_ary = array(
+            'studenthallticket_id',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('studenthallticket');
+        $this->db->where(array(
+            'status' => '1',
+            'archive_status' => '1',
+            'hallticket_excel_id' => $hallticketexcel_id,
+        ));
+        $this->db->group_by('fk_student_id');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_total_receipt_count($excel_details_id)
+    {
+        $slt_ary = array(
+            'receipt_id',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('receipt');
+        $this->db->where(array(
+            'status' => '1',
+            'archive_status' => '1',
+            'fk_excel_id' => $excel_details_id,
+        ));
+        $this->db->group_by('fk_student_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();

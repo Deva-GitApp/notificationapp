@@ -1,3 +1,10 @@
+<?php
+
+//use Spipu\Html2Pdf\Tag\Html\Em;
+
+$CI = &get_instance();
+$CI->load->model('admin/student_model');
+?>
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -82,27 +89,35 @@
                             <th>Sn.</th>
                             <th>File Name</th>
                             <th>File Size</th>
-                            <th>Total Receipt</th>
-                            <th>Receipt Sent Successfully</th>
+                            <th>Total Halltickets</th>
+                            <th>Halltickets Sent Successfully</th>
                             <th>Uploaded Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        //                        print_r($excel_data);
                         $i = 1;
-                        if (!empty($excel_data) && $excel_data[0]['studenthallticket_count'] != '0') {
+                        if (!empty($excel_data)) {
                             foreach ($excel_data as $list) {
+                                $hallticketdata = $CI->student_model->get_totalhallticket_count($list['excel_details_id']);
                         ?>
                                 <tr>
                                     <td><?php echo $i; ?></td>
                                     <td><?php echo $list['orig_name']; ?></td>
                                     <td><?php echo $list['file_size']; ?></td>
-                                    <td><?php echo $list['studenthallticket_count']; ?></td>
+                                    <td><?php echo count($hallticketdata); ?></td>
                                     <td><?php echo $list['sent_count']; ?></td>
                                     <td><?php echo date('d-M-Y H:i', strtotime($list['uploaded_date'])); ?></td>
-                                    <td><a href="javascript:void(0);" data-excelid="<?= $list['excel_details_id'] ?>" class="btn btn-primary send_hallticket_details">Send Hallticket Details</a></td>
+                                    <td>
+                                        <?php
+                                        if (intval($list['sent_count']) < count($hallticketdata)) {
+                                        ?>
+                                            <a href="javascript:void(0);" data-excelid="<?= $list['excel_details_id'] ?>" class="btn btn-primary send_hallticket_details">Send Hallticket Details</a>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
                                 </tr>
                         <?php
                                 $i++;
@@ -131,12 +146,14 @@
                 data: {
                     excelid: excelid
                 },
+                dataType: 'json',
                 success: function(msg) {
                     if (msg != false) {
+                        console.log(msg);
                         _this.remove();
                         $.confirm({
                             title: 'Congratulations!!',
-                            content: 'Successfully Sent' + msg.success + '<br>' + 'Successfully Sent' + msg.failure,
+                            content: 'Successfully Sent to ' + msg.success + ' Users. <br>' + 'Total Failure Count ' + msg.failure,
                             type: 'green',
                             typeAnimated: true,
                             buttons: {

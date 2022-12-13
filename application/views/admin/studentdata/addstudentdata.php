@@ -1,3 +1,7 @@
+<?php
+$CI = &get_instance();
+$CI->load->model('admin/student_model');
+?>
 <div class="content-wrapper">
     <section class="content-header">
         <h1>
@@ -94,29 +98,29 @@
                         $i = 1;
                         if (!empty($excel_data)) {
                             foreach ($excel_data as $list) {
+                                $res =  $this->student_model->get_total_receipt_count($list['excel_details_id']);
+                                $receipt_count = 0;
+                                if (!empty($res)) {
+                                    $receipt_count = count($res);
+                                }
                         ?>
                                 <tr>
                                     <td><?php echo $i; ?></td>
                                     <td><?php echo $list['orig_name']; ?></td>
                                     <td><?php echo $list['file_size']; ?></td>
-                                    <td><?php echo $list['receipt_count']; ?></td>
+                                    <td><?= $receipt_count; ?></td>
                                     <td><?php echo $list['sent_count']; ?></td>
                                     <td><?php echo date('d-M-Y H:i', strtotime($list['uploaded_date'])); ?></td>
                                     <td>
                                         <?php
-                                        if ($list['receipt_count'] > 0) {
-                                            if ($list['receipt_count'] < $list['sent_count']) {
+                                        if (intval($list['sent_count']) < $receipt_count) {
                                         ?>
-                                                <a href="javascript:void(0);" data-excelid="<?= $list['excel_details_id'] ?>" class="btn btn-primary send_receipt_details">Send Receipt Details</a>
+                                            <a href="javascript:void(0);" data-excelid="<?= $list['excel_details_id'] ?>" class="btn btn-primary send_receipt_details">Send Receipt Details</a>
                                     </td>
                                 <?php
-                                            } else {
-                                ?>
-                                    <div class="text-success">Sent Successfully</div>
-                            <?php
-                                            }
+
                                         }
-                            ?>
+                                ?>
                                 </tr>
                         <?php
                                 $i++;
@@ -145,12 +149,13 @@
                 data: {
                     excelid: excelid
                 },
+                dataType: 'json',
                 success: function(msg) {
                     if (msg != false) {
                         _this.remove();
                         $.confirm({
                             title: 'Congratulations!!',
-                            content: 'Successfully Sent' + msg.success + '<br>' + 'Successfully Sent' + msg.failure,
+                            content: 'Successfully Sent to ' + msg.success + ' Users. <br>' + 'Total Failure Count ' + msg.failure,
                             type: 'green',
                             typeAnimated: true,
                             buttons: {

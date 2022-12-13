@@ -121,7 +121,7 @@ class Studentnotification extends CI_Controller
                 'bower_components/datatable.net.btns/js/vfs_fonts.js',
                 'bower_components/datatable.net.btns/js/buttons.html5.min.js',
             );
-            
+
             $data['notificationexcel_data'] = $this->studentnotification_model->get_all_uploaded_excel_data();
 
 

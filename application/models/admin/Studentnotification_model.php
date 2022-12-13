@@ -227,22 +227,38 @@ class Studentnotification_model extends CI_Model
     public function get_all_uploaded_excel_data()
     {
         $slt_ary = array(
-            'a.excel_details_id',
-            'a.orig_name',
-            'a.file_name',
-            'a.file_size',
-            'a.sent_count',
-            'a.created_date as uploaded_date',
-            'COUNT(b.student_notification_id) as student_notification_count',
+            'excel_details_id',
+            'orig_name',
+            'file_name',
+            'file_size',
+            'sent_count',
+            'created_date as uploaded_date',
         );
         $this->db->select($slt_ary);
-        $this->db->from('excel_notification_details  as a');
-        $this->db->join('students_notification  as b', 'b.notificationexcel_id=a.excel_details_id', 'left');
+        $this->db->from('excel_notification_details');
         $this->db->where(array(
-            'a.status' => '1',
-            'a.archive_status' => '1',
+            'status' => '1',
+            'archive_status' => '1',
         ));
-        $this->db->group_by('a.excel_details_id');
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_total_notification_count($excel_id)
+    {
+        $slt_ary = array(
+            'student_notification_id'
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students_notification');
+        $this->db->where(array(
+            'status' => '1',
+            'archive_status' => '1',
+            'notificationexcel_id' => $excel_id,
+        ));
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();

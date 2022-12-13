@@ -268,7 +268,7 @@ class studentdata extends CI_Controller
                     echo json_encode(
                         array(
                             'success' => $success_count,
-                            'failure' => $success_count,
+                            'failure' => $failure_count,
                         )
                     );
                 } else {

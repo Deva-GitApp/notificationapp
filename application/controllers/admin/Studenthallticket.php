@@ -74,7 +74,7 @@ class Studenthallticket extends CI_Controller
             );
 
             $data['studenthallticket_list'] = $this->student_model->get_all_studenthallticket();
-            
+
             $this->load->view('admin/includes/header', $data);
             $this->load->view('admin/includes/admin_menu', $data);
             $this->load->view('admin/studenthallticket/view_studenthallticket', $data);
@@ -228,8 +228,10 @@ class Studenthallticket extends CI_Controller
                 $excelid = $this->input->post('excelid');
                 $student_ids_ary = $this->student_model->get_all_students_hall_ticket_id($excelid);
                 if (!empty($student_ids_ary)) {
+
                     $student_ids_ary = array_unique(array_column($student_ids_ary, 'fk_student_id'));
                     $student_data = $this->student_model->get_all_students($student_ids_ary);
+
                     $success_count = 0;
                     $failure_count = 0;
                     foreach ($student_data as $key => $student) {
@@ -258,6 +260,11 @@ class Studenthallticket extends CI_Controller
 
                         //exit;
                     }
+                    $msg['msg'] = array(
+                        'success' => $success_count,
+                        'failure' => $failure_count,
+                    );
+                    echo json_encode($msg['msg']);
                 } else {
                     echo false;
                 }
