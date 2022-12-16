@@ -42,7 +42,7 @@ class Studenthallticket extends CI_Controller
             $role_id = $session_data['role'];
 
             $data['ss_data'] = $session_data;
-            $data['title'] = 'Student Receipt Data';
+            $data['title'] = 'Student Hall Ticket Data';
             $data['sub_title'] = 'View';
             /*
               $data['loadcss'] = array(
@@ -225,12 +225,12 @@ class Studenthallticket extends CI_Controller
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
             if (isset($_POST) && !empty($_POST)) {
-                $excelid = $this->input->post('excelid');
-                $student_ids_ary = $this->student_model->get_all_students_hall_ticket_id($excelid);
-                if (!empty($student_ids_ary)) {
-
-                    $student_ids_ary = array_unique(array_column($student_ids_ary, 'fk_student_id'));
-                    $student_data = $this->student_model->get_all_students($student_ids_ary);
+                $form_data = $this->input->post('form_data');
+                parse_str($form_data, $searcharray);
+                if (!empty($searcharray['student_id'])) {
+                    $excelid =  $searcharray['student_excel_id'];
+                    $student_ids_ary = $searcharray['student_id'];
+                    $student_data = $this->student_model->get_all_students_hall_ticket($student_ids_ary);
 
                     $success_count = 0;
                     $failure_count = 0;
@@ -265,6 +265,41 @@ class Studenthallticket extends CI_Controller
                         'failure' => $failure_count,
                     );
                     echo json_encode($msg['msg']);
+                } else {
+                    echo false;
+                }
+            } else {
+                echo false;
+            }
+        }
+    }
+
+
+    public function preview_students_list()
+    {
+        if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
+            $session_data = $this->session->userdata('srihertemp_admin_logged_in');
+            $uid = $session_data['id'];
+            if (isset($_POST) && !empty($_POST)) {
+                $excelid = $this->input->post('excelid');
+                $student_data_ary = $this->student_model->get_all_students_frpreview($excelid);
+                if (!empty($student_data_ary)) {
+                    $html = '';
+                    foreach ($student_data_ary as $studentdata) {
+                        $student_dob =  ($studentdata['student_dob'] != NULL) ? date('d M Y', strtotime($studentdata['student_dob'])) : ' - ';
+                        $mail_status =  ($studentdata['hallticket_email_status'] != 0) ? 'Sent Successfully' : 'Not Yet Sent';
+                        $student_id =  ($studentdata['hallticket_email_status'] == 0) ? $studentdata['student_id'] : '';
+                        $cls = ($studentdata['hallticket_email_status'] != 0) ? 'succ' : 'fail';
+                        $html .= '<tr class="' . $cls . '">
+                        <td>' . $student_id . '</td>
+                        <td>' . $studentdata['student_name'] . '</td>
+                        <td>' . $studentdata['student_barcode'] . '</td>
+                        <td>' . $studentdata['course_name'] . '</td>
+                        <td>' . $student_dob . '</td>                      
+                        <td>' . $mail_status . '</td>                      
+                    </tr>';
+                    }
+                    echo $html;
                 } else {
                     echo false;
                 }

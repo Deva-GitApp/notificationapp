@@ -126,6 +126,31 @@ class Student_model extends CI_Model
             return FALSE;
         }
     }
+    public function get_all_students_hall_ticket($student_ida_ary)
+    {
+        $slt_ary = array(
+            'student_id',
+            'student_name',
+            'student_barcode',
+            'course_name',
+            'batch',
+            'status',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students');
+        $this->db->where(array(
+            'status' => '1',
+            'hallticket_email_status' => '0',
+            'archive_status' => '1',
+        ));
+        $this->db->where_in('student_id', $student_ida_ary);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
 
     public function get_all_students_id($excelid)
     {
@@ -162,6 +187,35 @@ class Student_model extends CI_Model
         ));
         $this->db->group_by('fk_student_id');
         $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_all_students_frpreview($excelid)
+    {
+        $slt_ary = array(
+            'a.fk_student_id',
+            'b.student_id ',
+            'b.student_name',
+            'b.student_barcode',
+            'b.student_dob',
+            'b.course_name',
+            'b.hallticket_email_status',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('studenthallticket as a');
+        $this->db->join('students  as b', 'b.student_barcode=a.student_barcode', 'left');
+        $this->db->where(array(
+            'a.status' => '1',
+            'a.archive_status' => '1',
+            'a.hallticket_excel_id' => $excelid,
+            /* 'b.hallticket_email_status' => '0', */
+        ));
+        $this->db->group_by('a.fk_student_id');
+        $query = $this->db->get();
+        /* echo $this->db->last_query(); */
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
