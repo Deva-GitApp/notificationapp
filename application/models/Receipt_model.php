@@ -1,15 +1,17 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Description of base_model
  *
  * @author rckumar
  */
-class Receipt_model extends CI_Model {
+class Receipt_model extends CI_Model
+{
 
-    public function get_receipt_details($student_id) {
+    public function get_receipt_details($student_id)
+    {
         $slt_ary = array(
             'b.receipt_id',
             'b.fk_student_id',
@@ -21,6 +23,7 @@ class Receipt_model extends CI_Model {
             'b.receipt_des',
             'b.status',
             'a.student_id',
+            'a.receipt_preview_status',
             'a.student_name',
             'a.course_name',
             'a.batch',
@@ -41,7 +44,8 @@ class Receipt_model extends CI_Model {
         }
     }
 
-    public function get_receipt_details_by_id($student_id, $receipt_id) {
+    public function get_receipt_details_by_id($student_id, $receipt_id)
+    {
         $slt_ary = array(
             'b.receipt_id',
             'b.fk_student_id',
@@ -74,7 +78,8 @@ class Receipt_model extends CI_Model {
         }
     }
 
-    public function get_receiptsub_details($receipt_id) {
+    public function get_receiptsub_details($receipt_id)
+    {
         $slt_ary = array(
             'receipt_detail_id',
             'fk_receipt_id',
@@ -96,5 +101,4 @@ class Receipt_model extends CI_Model {
             return FALSE;
         }
     }
-
 }

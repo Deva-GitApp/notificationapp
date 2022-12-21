@@ -75,10 +75,33 @@ class Studenthallticket extends CI_Controller
 
             $data['studenthallticket_list'] = $this->student_model->get_all_studenthallticket();
 
-            $this->load->view('admin/includes/header', $data);
-            $this->load->view('admin/includes/admin_menu', $data);
-            $this->load->view('admin/studenthallticket/view_studenthallticket', $data);
-            $this->load->view('admin/includes/footer', $data);
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('btn_submit', 'Document', 'trim');
+            $this->form_validation->set_rules('student_id[]', 'Student', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $this->load->view('admin/includes/header', $data);
+                $this->load->view('admin/includes/admin_menu', $data);
+                $this->load->view('admin/studenthallticket/view_studenthallticket', $data);
+                $this->load->view('admin/includes/footer', $data);
+            } else {
+                $student_id_ary = $this->input->post('student_id[]');
+                $total_student_ary = array_column($data['studenthallticket_list'], 'student_id');
+                $student_list_toremove = array_diff($total_student_ary, $student_id_ary);
+                $resremove = false;
+                if (!empty($student_list_toremove)) {
+                    $resremove =  $this->student_model->update_hall_preview_status_remove($student_list_toremove);
+                }
+                
+                $res = $this->student_model->update_hall_preview_status($student_id_ary, $student_list_toremove);
+                if ($res || $resremove) {
+                    $this->session->set_flashdata('db_sucess', 'Student Permission Updated');
+                    redirect('admin/studenthallticket/view', 'refresh');
+                } else {
+                    $this->session->set_flashdata('db_error', 'No Updation Done');
+                    redirect('admin/studenthallticket/view', 'refresh');
+                }
+            }
         } else {
             redirect(base_url('admin'), 'refresh');
         }

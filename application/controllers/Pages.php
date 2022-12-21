@@ -38,6 +38,9 @@ class Pages extends CI_Controller
             $user_session_data = $this->session->userdata('srihertemp_user_logged_in');
             $student_id = $user_session_data['student_id'];
             $data['receipt_details'] = $this->receipt_model->get_receipt_details($student_id);
+
+
+
             $this->load->view('includes/header', $data);
             $this->load->view('includes/menu', $data);
             $this->load->view('pages/studentreceipt', $data);

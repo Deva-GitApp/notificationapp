@@ -81,13 +81,34 @@ class Studentnotification extends CI_Controller
                 'bower_components/datatable.net.btns/js/buttons.html5.min.js',
             );
 
-            $data['studenthallticket_list'] = $this->student_model->get_all_student_datas();
-            //            $data['role_type_list'] = $this->employee_model->get_all_role_type();
-            //            $data['department_list'] = $this->employee_model->get_all_departments();
-            $this->load->view('admin/includes/header', $data);
-            $this->load->view('admin/includes/admin_menu', $data);
-            $this->load->view('admin/studenthallticket/view_studenthallticket', $data);
-            $this->load->view('admin/includes/footer', $data);
+            $data['studentnotification_list'] = $this->studentnotification_model->get_all_studentnotification_datas();
+            $this->load->library('form_validation');
+            $this->form_validation->set_rules('btn_submit', 'Document', 'trim');
+            $this->form_validation->set_rules('student_id[]', 'Student', 'required');
+
+            if ($this->form_validation->run() == FALSE) {
+                $this->load->view('admin/includes/header', $data);
+                $this->load->view('admin/includes/admin_menu', $data);
+                $this->load->view('admin/studentnotification/view', $data);
+                $this->load->view('admin/includes/footer', $data);
+            } else {
+                $student_id_ary = $this->input->post('student_id[]');
+                $total_student_ary = array_column($data['studentnotification_list'], 'student_id');
+                $student_list_toremove = array_diff($total_student_ary, $student_id_ary);
+                $resremove = false;
+                if (!empty($student_list_toremove)) {
+                    $resremove =  $this->studentnotification_model->update_notification_preview_status_remove($student_list_toremove);
+                }
+
+                $res = $this->studentnotification_model->update_notification_preview_status($student_id_ary);
+                if ($res || $resremove) {
+                    $this->session->set_flashdata('db_sucess', 'Student Permission Updated');
+                    redirect('admin/studentnotification/view', 'refresh');
+                } else {
+                    $this->session->set_flashdata('db_error', 'No Updation Done');
+                    redirect('admin/studentnotification/view', 'refresh');
+                }
+            }
         } else {
             redirect(base_url('admin'), 'refresh');
         }
@@ -246,41 +267,82 @@ class Studentnotification extends CI_Controller
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
             if (isset($_POST) && !empty($_POST)) {
-                $excelid = $this->input->post('excelid');
-                $student_data = $this->studentnotification_model->get_all_nofication_details($excelid);
-                // var_dump($student_data);
-                if (!empty($student_data)) {
-                    $success_count = 0;
-                    $failure_count = 0;
-                    foreach ($student_data as $key => $student) {
-                        $student_id = $student['student_id'];
-                        $student_name = $student['student_name'];
-                        $student_barcode = $student['student_barcode'];
-                        $course_name = $student['course_name'];
-                        $batch = $student['batch'];
-                        $enc_stud_id = $this->usersupport->encrypt_decrypt('encrypt', $student_id);
+                $form_data = $this->input->post('form_data');
+                parse_str($form_data, $searcharray);
+                if (!empty($searcharray['student_id'])) {
+                    $excelid =  $searcharray['student_excel_id'];
+                    $student_ids_ary = $searcharray['student_id'];
+                    $student_data = $this->studentnotification_model->get_all_nofication_details($student_ids_ary);
+                    // var_dump($student_data);
+                    if (!empty($student_data)) {
+                        $success_count = 0;
+                        $failure_count = 0;
+                        foreach ($student_data as $key => $student) {
+                            $student_id = $student['student_id'];
+                            $student_name = $student['student_name'];
+                            $student_barcode = $student['student_barcode'];
+                            $course_name = $student['course_name'];
+                            $batch = $student['batch'];
+                            $enc_stud_id = $this->usersupport->encrypt_decrypt('encrypt', $student_id);
 
-                        $url = base_url() . '/userenclogin/receipt/' . $enc_stud_id;
-                        $mail_data['url'] = $url;
-                        $mail_data['student_id'] = $student_id;
-                        $mail_data['student_name'] = $student_name;
-                        $mail_data['student_barcode'] = $student_barcode;
-                        $mail_data['course_name'] = $course_name;
-                        $mail_data['batch'] = $batch;
-                        $mail_data['user_mail'] = $student_barcode . '@sriramachandra.edu.in';
-                        $res = true; //$this->usersupport->sent_notification_mail($mail_data);
-                        if ($res) {
-                            $this->studentnotification_model->update_notifiction_mailstatus($student_id, $excelid);
-                            $success_count++;
-                        } else {
-                            $failure_count++;
+                            $url = base_url() . '/userenclogin/notification/' . $enc_stud_id;
+                            $mail_data['url'] = $url;
+                            $mail_data['student_id'] = $student_id;
+                            $mail_data['student_name'] = $student_name;
+                            $mail_data['student_barcode'] = $student_barcode;
+                            $mail_data['course_name'] = $course_name;
+                            $mail_data['batch'] = $batch;
+                            $mail_data['user_mail'] = $student_barcode . '@sriramachandra.edu.in';
+                            $res = true; //$this->usersupport->sent_notification_mail($mail_data);
+                            if ($res) {
+                                $this->studentnotification_model->update_notifiction_mailstatus($student_id, $excelid);
+                                $success_count++;
+                            } else {
+                                $failure_count++;
+                            }
                         }
+                        $ary = array(
+                            'success' => $success_count,
+                            'failure' => $failure_count,
+                        );
+                        echo json_encode($ary);
+                    } else {
+                        echo false;
                     }
-                    $ary = array(
-                        'success' => $success_count,
-                        'failure' => $failure_count,
-                    );
-                    echo json_encode($ary);
+                } else {
+                    echo false;
+                }
+            } else {
+                echo false;
+            }
+        }
+    }
+
+    public function preview_students_notification_list()
+    {
+        if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
+            $session_data = $this->session->userdata('srihertemp_admin_logged_in');
+            $uid = $session_data['id'];
+            if (isset($_POST) && !empty($_POST)) {
+                $excelid = $this->input->post('excelid');
+                $student_data_ary = $this->studentnotification_model->get_all_students_frpreview($excelid);
+                if (!empty($student_data_ary)) {
+                    $html = '';
+                    foreach ($student_data_ary as $studentdata) {
+                        $student_dob =  ($studentdata['student_dob'] != NULL) ? date('d M Y', strtotime($studentdata['student_dob'])) : ' - ';
+                        $mail_status =  ($studentdata['notifiction_mailstatus'] != 0) ? 'Sent Successfully' : 'Not Yet Sent';
+                        $student_id =  ($studentdata['notifiction_mailstatus'] == 0) ? $studentdata['student_id'] : '';
+                        $cls = ($studentdata['notifiction_mailstatus'] != 0) ? 'succ' : 'fail';
+                        $html .= '<tr class="' . $cls . '">
+                        <td>' . $student_id . '</td>
+                        <td>' . $studentdata['student_name'] . '</td>
+                        <td>' . $studentdata['session_name'] . '</td>
+                        <td>' . $studentdata['student_barcode'] . '</td>
+                        <td>' . $studentdata['course_name'] . '</td>
+                        <td>' . $mail_status . '</td>                      
+                    </tr>';
+                    }
+                    echo $html;
                 } else {
                     echo false;
                 }

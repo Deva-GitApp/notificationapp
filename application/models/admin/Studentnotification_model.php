@@ -6,6 +6,97 @@ if (!defined('BASEPATH'))
 class Studentnotification_model extends CI_Model
 {
 
+    public function get_all_students_frpreview($excelid)
+    {
+        $slt_ary = array(
+            'a.student_notification_id',
+            'a.session_name',
+            'a.notificationexcel_id',
+            'b.student_id ',
+            'b.student_name',
+            'b.student_barcode',
+            'b.student_dob',
+            'b.course_name',
+            'b.notifiction_mailstatus',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students_notification as a');
+        $this->db->join('students  as b', 'b.student_barcode=a.student_barcode', 'left');
+        $this->db->where(array(
+            'a.status' => '1',
+            'a.archive_status' => '1',
+            'a.notificationexcel_id' => $excelid,
+        ));
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+
+    public function update_notification_preview_status($student_ary)
+    {
+        $data = array(
+            'notification_preview_status' => '1'
+        );
+
+        $this->db->where_in('student_id', $student_ary);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return FALSE;
+        }
+    }
+    public function update_notification_preview_status_remove($student_list_toremove)
+    {
+        $data = array(
+            'notification_preview_status' => '0'
+        );
+        $this->db->where_in('student_id', $student_list_toremove);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+
+    public function get_all_studentnotification_datas()
+    {
+
+        $whr_ary = array(
+            'a.status' => '1',
+            'a.archive_status' => '1',
+        );
+        $slt_ary = array(
+            'a.student_notification_id',
+            'a.session_name',
+            'a.student_barcode',
+            'a.uploaded_date',
+            'a.created_date',
+            'b.student_id',
+            'b.notifiction_mailstatus',
+            'b.student_name',
+            'b.student_barcode',
+            'b.student_dob',
+            'b.course_name',
+            'b.notification_preview_status',
+
+        );
+
+        $this->db->select($slt_ary);
+        $this->db->from('students_notification as a');
+        $this->db->join('students  as b', 'b.student_barcode=a.student_barcode', 'left');
+        $this->db->where($whr_ary);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
 
     public function check_hallticket_fr_student($student_barcode)
     {
@@ -64,14 +155,17 @@ class Studentnotification_model extends CI_Model
             return FALSE;
         }
     }
-    public function get_all_nofication_details($excelid)
+
+    public function get_all_nofication_details($student_id_ary)
     {
-        $this->db->select('b.*');
-        $this->db->from('students_notification as a');
-        $this->db->join('students  as b', 'b.student_barcode=a.student_barcode', 'left');
+        $this->db->select('*');
+        $this->db->from('students');
         $this->db->where(array(
-            'a.notificationexcel_id' => $excelid,
+            'status' => '1',
+            'notifiction_mailstatus' => '0',
+            'archive_status' => '1',
         ));
+        $this->db->where_in('student_id', $student_id_ary);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();

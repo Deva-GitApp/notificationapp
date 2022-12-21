@@ -19,6 +19,7 @@ class Student_model extends CI_Model
             'b.course_name',
             'b.batch',
             'b.receipt_email_status',
+            'b.receipt_preview_status',
             'b.student_newdes',
             'b.status',
             'b.archive_status',
@@ -32,6 +33,8 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
+        $this->db->group_by('a.fk_student_id');
+        $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -56,6 +59,8 @@ class Student_model extends CI_Model
             'a.created_date',
             'b.student_name',
             'b.student_dob',
+            'b.student_id',
+            'b.hall_ticket_preview_status',
             'b.batch',
 
         );
@@ -66,6 +71,8 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
+        $this->db->group_by('a.fk_student_id');
+        $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -97,6 +104,60 @@ class Student_model extends CI_Model
             return $query->result_array();
         } else {
             return FALSE;
+        }
+    }
+    public function update_hall_preview_status($student_ary)
+    {
+        $data = array(
+            'hall_ticket_preview_status' => '1'
+        );
+
+        $this->db->where_in('student_id', $student_ary);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return FALSE;
+        }
+    }
+    public function update_receipt_preview_status($student_ary)
+    {
+        $data = array(
+            'receipt_preview_status' => '1'
+        );
+
+        $this->db->where_in('student_id', $student_ary);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        } else {
+            return FALSE;
+        }
+    }
+    public function update_receipt_preview_status_remove($student_list_toremove)
+    {
+        $data = array(
+            'receipt_preview_status' => '0'
+        );
+        $this->db->where_in('student_id', $student_list_toremove);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return TRUE;
+        } else {
+            return false;
+        }
+    }
+    public function update_hall_preview_status_remove($student_list_toremove)
+    {
+        $data = array(
+            'hall_ticket_preview_status' => '0'
+        );
+        $this->db->where_in('student_id', $student_list_toremove);
+        $this->db->update('students', $data);
+        if ($this->db->affected_rows() > 0) {
+            return TRUE;
+        } else {
+            return false;
         }
     }
 
@@ -214,6 +275,38 @@ class Student_model extends CI_Model
             /* 'b.hallticket_email_status' => '0', */
         ));
         $this->db->group_by('a.fk_student_id');
+        $query = $this->db->get();
+        /* echo $this->db->last_query(); */
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_all_studentsreceipts_frpreview($excelid)
+    {
+        $slt_ary = array(
+            'a.fk_student_id',
+            'a.receipt_no',
+            'a.receipt_date',
+            'a.receipt_des',
+            'a.receipt_mode',
+            'b.student_id ',
+            'b.student_name',
+            'b.student_barcode',
+            'b.student_dob',
+            'b.course_name',
+            'b.receipt_email_status',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('receipt as a');
+        $this->db->join('students as b', 'b.student_barcode=a.student_barcode', 'left');
+        $this->db->where(array(
+            'a.status' => '1',
+            'a.archive_status' => '1',
+            'a.fk_excel_id' => $excelid,
+            /* 'b.hallticket_email_status' => '0', */
+        ));
         $query = $this->db->get();
         /* echo $this->db->last_query(); */
         if ($query->num_rows() > 0) {

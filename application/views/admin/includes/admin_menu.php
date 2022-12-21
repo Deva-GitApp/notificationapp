@@ -84,23 +84,9 @@ $method_name = $this->router->fetch_method(); // for method
                 </a>
                 <ul class="treeview-menu">
                     <li class="<?php echo ($class_name == 'studentnotification' && $method_name == 'create') ? 'active' : '' ?>"><a href="<?php echo base_url('admin/studentnotification/create'); ?>"><i class="fa fa-circle-o"></i> Create</a></li>
-                    <!--<li class="<?php echo ($class_name == 'studentnotification' && $method_name == 'view') ? 'active' : '' ?>"><a href="<?php echo base_url('admin/studentnotification/view'); ?>"><i class="fa fa-circle-o"></i> View</a></li>-->
+                    <li class="<?php echo ($class_name == 'studentnotification' && $method_name == 'view') ? 'active' : '' ?>"><a href="<?php echo base_url('admin/studentnotification/view'); ?>"><i class="fa fa-circle-o"></i> View</a></li>
                 </ul>
-            </li>
-            <!--li class="treeview <?php echo ($class_name == 'sendnotification') ? 'active menu-open' : '' ?>">
-                <a href="javascript:void(0)">
-                    <i class="fa fa-cloud-upload"></i>
-                    <span>Send Notification</span>
-                    <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-                </a>
-                <ul class="treeview-menu">
-                    <li class="<?php echo ($class_name == 'sendnotification' && $method_name == 'create') ? 'active' : '' ?>"><a href="<?php echo base_url('admin/sendnotification/create'); ?>"><i class="fa fa-circle-o"></i> Create</a></li>
-                    <li class="<?php echo ($class_name == 'sendnotification' && $method_name == 'view') ? 'active' : '' ?>"><a href="<?php echo base_url('admin/sendnotification/view'); ?>"><i class="fa fa-circle-o"></i> View</a></li>
-                </ul>
-            </li-->
+            </li>            
         </ul>
     </section>
-    <!-- /.sidebar -->
 </aside>

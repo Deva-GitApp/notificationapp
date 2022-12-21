@@ -83,7 +83,7 @@ class Pages_model extends CI_Model
             'course_name',
             'batch',
         );
-        $this->db->select($slt_ary);
+        $this->db->select('*');
         $this->db->from('students');
         $this->db->where(array(
             'status' => '1',
@@ -106,7 +106,7 @@ class Pages_model extends CI_Model
             'a.student_barcode',
             'a.course_name',
             'a.batch',
-            'a.batch',
+            'a.hall_ticket_preview_status',
             'a.status',
             'a.archive_status',
             'b.studenthallticket_id',

@@ -169,6 +169,7 @@ $CI->load->library('usersupport');
         </div>
     </div>
 </div>
+<input id="pdf-button" type="button" value="Download PDF" onclick="downloadPDF()" />
 <div class="d-flex justify-content-center">
     <a href="javascript:void(0)" id="buttonpdfdownload" target="_blank"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> Download PDF</a>
 </div>
