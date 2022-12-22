@@ -9,23 +9,22 @@ class Student_model extends CI_Model
     public function get_all_student_datas()
     {
         $slt_ary = array(
-            'a.receipt_id',
-            'a.receipt_no',
-            'a.receipt_date',
-            'a.receipt_des',
+            'ANY_VALUE(a.receipt_id) as receipt_id',
+            'ANY_VALUE(a.receipt_no) as receipt_no',
+            'ANY_VALUE(a.receipt_date) as receipt_date',
+            'ANY_VALUE(a.receipt_des) as receipt_des',
             'a.fk_student_id',
-            'COUNT(a.fk_student_id) as student_count',
-            'b.student_id',
-            'b.student_name',
-            'b.student_barcode',
-            'b.course_name',
-            'b.batch',
-            'b.receipt_email_status',
-            'b.receipt_preview_status',
-            'b.student_newdes',
-            'b.status',
-            'b.archive_status',
-            'b.created_date'
+            'ANY_VALUE(b.student_id) as student_id',
+            'ANY_VALUE(b.student_name) as student_name',
+            'ANY_VALUE(b.student_barcode) as student_barcode',
+            'ANY_VALUE(b.course_name) as course_name',
+            'ANY_VALUE(b.batch) as batch',
+            'ANY_VALUE(b.receipt_email_status) as receipt_email_status',
+            'ANY_VALUE(b.receipt_preview_status) as receipt_preview_status',
+            'ANY_VALUE(b.student_newdes) as student_newdes',
+            'ANY_VALUE(b.status) as status',
+            'ANY_VALUE(b.archive_status) as archive_status',
+            'ANY_VALUE(b.created_date) as created_date'
 
         );
         $this->db->select($slt_ary);
@@ -36,7 +35,7 @@ class Student_model extends CI_Model
             'a.archive_status' => '1',
         ));
         $this->db->group_by('a.fk_student_id');
-        $this->db->order_by('a.fk_student_id', 'ASC');
+        $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -219,7 +218,6 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
-            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('receipt');
@@ -241,7 +239,6 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
-            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('studenthallticket');
@@ -262,13 +259,12 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'a.fk_student_id',
-            'COUNT(a.fk_student_id) as student_count',
-            'b.student_id ',
-            'b.student_name',
-            'b.student_barcode',
-            'b.student_dob',
-            'b.course_name',
-            'b.hallticket_email_status',
+            'ANY_VALUE(b.student_id) as student_id ',
+            'ANY_VALUE(b.student_name) as student_name',
+            'ANY_VALUE(b.student_barcode) as student_barcode',
+            'ANY_VALUE(b.student_dob) as student_dob',
+            'ANY_VALUE(b.course_name) as course_name',
+            'ANY_VALUE(b.hallticket_email_status) as hallticket_email_status',
         );
         $this->db->select($slt_ary);
         $this->db->from('studenthallticket as a');
@@ -372,8 +368,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
-            'COUNT(fk_student_id) as student_count',
-            'studenthallticket_id',
+            'ANY_VALUE(studenthallticket_id) as studenthallticket_id',
         );
         $this->db->select($slt_ary);
         $this->db->from('studenthallticket');
@@ -393,9 +388,8 @@ class Student_model extends CI_Model
     public function get_total_receipt_count($excel_details_id)
     {
         $slt_ary = array(
-            'receipt_id',
+            'ANY_VALUE(receipt_id) as receipt_id',
             'fk_student_id',
-            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('receipt');
