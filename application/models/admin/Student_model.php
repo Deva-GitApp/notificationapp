@@ -555,6 +555,11 @@ class Student_model extends CI_Model
             return FALSE;
         }
     }
+    public function add_bulk_students($studentdatas)
+    {
+
+        $this->db->insert_batch('students', $studentdatas);
+    }
 
     public function add_student_hallticket($student_id, $student_barcode, $progcode, $dob, $course_code, $hall_tck_course_name, $examdate, $examtime, $fullmonthyear, $yearsempart, $yearsemhead, $sylyear, $mysession, $hallticketexcel_id, $id)
     {
@@ -825,6 +830,130 @@ class Student_model extends CI_Model
             }
         } else {
             return FALSE;
+        }
+    }
+
+    /* datatable */
+    public function allposts_count()
+    {
+        $slt_ary = array(
+            'student_id'
+        );
+        $where_ary = array(
+            //            'status' => '1',
+            'archive_status' => '1',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students');
+        $this->db->where($where_ary);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->num_rows();
+        } else {
+            return false;
+        }
+    }
+
+    public function allposts($limit, $start, $order, $dir)
+    {
+        $slt_ary = array(
+            'student_id',
+            'student_name',
+            'student_barcode',
+            'student_dob',
+            'course_name',
+            'batch',
+            'student_dob',
+            'status',
+            'archive_status',
+            'created_by',
+            'created_date',
+            'modified_date',
+        );
+        $where_ary = array(
+            //            'status' => '1',
+            'archive_status' => '1',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students');
+        $this->db->where($where_ary);
+        $this->db->limit($limit, $start);
+        $this->db->order_by($order, $dir);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function posts_search($limit, $start, $search, $order, $dir)
+    {
+        $slt_ary = array(
+            'student_id',
+            'student_name',
+            'student_barcode',
+            'student_dob',
+            'course_name',
+            'batch',
+            'student_dob',
+            'status',
+            'archive_status',
+            'created_by',
+            'created_date',
+            'modified_date',
+        );
+
+        $where_ary = array(
+            //            'status' => '1',
+            'archive_status' => '1',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students');
+        $this->db->group_start();
+        $this->db->where($where_ary);
+        $this->db->group_end();
+        $this->db->group_start();
+        $this->db->like('student_name', $search, 'after');
+        $this->db->or_like('student_barcode', $search, 'after');
+        $this->db->or_like('course_name', $search, 'after');
+        $this->db->or_like('batch', $search, 'after');
+        $this->db->group_end();
+        $this->db->limit($limit, $start);
+        $this->db->order_by($order, $dir);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result();
+        } else {
+            return false;
+        }
+    }
+
+    public function posts_search_count($search)
+    {
+        $slt_ary = array(
+            'student_id',
+        );
+        $where_ary = array(
+            //            'status' => '1',
+            'archive_status' => '1',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('students');
+        $this->db->group_start();
+        $this->db->where($where_ary);
+        $this->db->group_end();
+        $this->db->group_start();
+        $this->db->like('student_name', $search, 'after');
+        $this->db->or_like('student_barcode', $search, 'after');
+        $this->db->or_like('course_name', $search, 'after');
+        $this->db->or_like('batch', $search, 'after');
+        $this->db->group_end();
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->num_rows();
+        } else {
+            return false;
         }
     }
 }

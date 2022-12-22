@@ -101,22 +101,7 @@ class Home_model extends CI_Model
             if ($query->num_rows() > 0) {
                 return $query->row_array();
             } else {
-                $slt_ary = array(
-                    '*',
-                );
-                $this->db->select($slt_ary);
-                $this->db->from('students');
-                $this->db->where(array(
-                    'status' => '1',
-                    'archive_status' => '1',
-                    'student_barcode' => $student_reg_no,
-                ));
-                $query = $this->db->get();
-                if ($query->num_rows() > 0) {
-                    return $query->row_array();
-                } else {
-                    return false;
-                }
+                return false;
             }
         }
     }

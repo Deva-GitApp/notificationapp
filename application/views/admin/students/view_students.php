@@ -52,26 +52,7 @@ $hashids = new Hashids\Hashids('the srh-ola studentdata error');
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $i = 1;
-                        if (!empty($students_list)) {
-                            foreach ($students_list as $list) {
-                        ?>
-                                <tr>
-                                    <td><?php echo $i; ?></td>
-                                    <td><?php echo $list['student_name']; ?></td>
-                                    <td><?php echo $list['student_barcode']; ?></td>
-                                    <td><?php echo $list['course_name']; ?></td>
-                                    <td><?php echo ($list['student_dob'] != NULL) ? date('d-M-Y', strtotime($list['student_dob'])) : ''; ?></td>
-                                    <td><?php echo $list['batch']; ?></td>
-                                    <td><?php echo date('d-M-Y H:i:s', strtotime($list['created_date'])); ?></td>
 
-                                </tr>
-                        <?php
-                                $i++;
-                            }
-                        }
-                        ?>
                     </tbody>
                 </table>
             </div>
@@ -84,6 +65,56 @@ $hashids = new Hashids\Hashids('the srh-ola studentdata error');
 <!-- content end -->
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
-        $('#example').dataTable();
+        $('#example').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "<?php echo base_url('admin/students/ajax_with_datatable') ?>",
+                "dataType": "json",
+                "type": "POST",
+                "data": {
+                    '<?php echo $this->security->get_csrf_token_name(); ?>': '<?php echo $this->security->get_csrf_hash(); ?>'
+                }
+            },
+            "fnRowCallback": function(nRow, aData, iDisplayIndex) {
+                var info = $(this).DataTable().page.info();
+                $("td:nth-child(1)", nRow).html(info.start + iDisplayIndex + 1);
+                return nRow;
+            },
+            "columns": [{
+                    "data": "student_id"
+                },
+                {
+                    "data": "student_name"
+                },
+                {
+                    "data": "student_barcode"
+                },
+                {
+                    "data": "course_name"
+                },
+                {
+                    "data": "student_dob"
+                },
+                {
+                    "data": "batch"
+                },
+                {
+                    "data": "created_date"
+                }
+            ],
+            "initComplete": function(settings, json) {
+                var info = this.api().page.info();
+                $('select[name=example_length]').append('<option value="' + info.recordsTotal + '">All</option>');
+            },
+
+            dom: 'Bfrtip',
+            buttons: [
+                'copyHtml5',
+                'excelHtml5',
+                'csvHtml5',
+                'pdfHtml5'
+            ],
+        });
     });
 </script>
