@@ -13,6 +13,7 @@ class Student_model extends CI_Model
             'a.receipt_no',
             'a.receipt_date',
             'a.receipt_des',
+            'a.fk_student_id',
             'b.student_id',
             'b.student_name',
             'b.student_barcode',
@@ -51,6 +52,7 @@ class Student_model extends CI_Model
             'a.dob',
             'a.halltcketcourse_name',
             'a.examdate',
+            'a.fk_student_id',
             'a.examtime',
             'a.course_code',
             'a.yearsemhead',
@@ -366,6 +368,7 @@ class Student_model extends CI_Model
     public function get_totalhallticket_count($hallticketexcel_id)
     {
         $slt_ary = array(
+            'fk_student_id',
             'studenthallticket_id',
         );
         $this->db->select($slt_ary);
@@ -387,6 +390,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'receipt_id',
+            'fk_student_id',
         );
         $this->db->select($slt_ary);
         $this->db->from('receipt');
