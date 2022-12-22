@@ -34,7 +34,7 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
-        $this->db->group_by('a.fk_student_id');
+        $this->db->group_by($slt_ary);
         $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -73,9 +73,10 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
-        $this->db->group_by('a.fk_student_id');
+        $this->db->group_by($slt_ary);
         $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
+        echo $this->db->last_query();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -276,7 +277,7 @@ class Student_model extends CI_Model
             'a.hallticket_excel_id' => $excelid,
             /* 'b.hallticket_email_status' => '0', */
         ));
-        $this->db->group_by('a.fk_student_id');
+        $this->db->group_by($slt_ary);
         $query = $this->db->get();
         /* echo $this->db->last_query(); */
         if ($query->num_rows() > 0) {
@@ -378,7 +379,7 @@ class Student_model extends CI_Model
             'archive_status' => '1',
             'hallticket_excel_id' => $hallticketexcel_id,
         ));
-        $this->db->group_by('fk_student_id');
+        $this->db->group_by($slt_ary);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -399,7 +400,7 @@ class Student_model extends CI_Model
             'archive_status' => '1',
             'fk_excel_id' => $excel_details_id,
         ));
-        $this->db->group_by('fk_student_id');
+        $this->db->group_by($slt_ary);
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
