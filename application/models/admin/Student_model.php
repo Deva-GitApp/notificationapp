@@ -14,6 +14,7 @@ class Student_model extends CI_Model
             'a.receipt_date',
             'a.receipt_des',
             'a.fk_student_id',
+            'COUNT(a.fk_student_id) as student_count',
             'b.student_id',
             'b.student_name',
             'b.student_barcode',
@@ -34,7 +35,7 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
-        $this->db->group_by($slt_ary);
+        $this->db->group_by('a.fk_student_id');
         $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
@@ -52,7 +53,7 @@ class Student_model extends CI_Model
             'a.dob',
             'a.halltcketcourse_name',
             'a.examdate',
-            'a.fk_student_id',
+            'COUNT(a.fk_student_id) as student_count',
             'a.examtime',
             'a.course_code',
             'a.yearsemhead',
@@ -73,10 +74,9 @@ class Student_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
         ));
-        $this->db->group_by($slt_ary);
+        $this->db->group_by('a.fk_student_id');
         $this->db->order_by('b.student_name', 'ASC');
         $query = $this->db->get();
-        echo $this->db->last_query();
         if ($query->num_rows() > 0) {
             return $query->result_array();
         } else {
@@ -220,6 +220,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
+            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('receipt');
@@ -241,6 +242,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
+            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('studenthallticket');
@@ -261,6 +263,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'a.fk_student_id',
+            'COUNT(a.fk_student_id) as student_count',
             'b.student_id ',
             'b.student_name',
             'b.student_barcode',
@@ -277,7 +280,7 @@ class Student_model extends CI_Model
             'a.hallticket_excel_id' => $excelid,
             /* 'b.hallticket_email_status' => '0', */
         ));
-        $this->db->group_by($slt_ary);
+        $this->db->group_by('a.fk_student_id');
         $query = $this->db->get();
         /* echo $this->db->last_query(); */
         if ($query->num_rows() > 0) {
@@ -370,6 +373,7 @@ class Student_model extends CI_Model
     {
         $slt_ary = array(
             'fk_student_id',
+            'COUNT(fk_student_id) as student_count',
             'studenthallticket_id',
         );
         $this->db->select($slt_ary);
@@ -379,7 +383,7 @@ class Student_model extends CI_Model
             'archive_status' => '1',
             'hallticket_excel_id' => $hallticketexcel_id,
         ));
-        $this->db->group_by($slt_ary);
+        $this->db->group_by('fk_student_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -392,6 +396,7 @@ class Student_model extends CI_Model
         $slt_ary = array(
             'receipt_id',
             'fk_student_id',
+            'COUNT(fk_student_id) as student_count',
         );
         $this->db->select($slt_ary);
         $this->db->from('receipt');
@@ -400,7 +405,7 @@ class Student_model extends CI_Model
             'archive_status' => '1',
             'fk_excel_id' => $excel_details_id,
         ));
-        $this->db->group_by($slt_ary);
+        $this->db->group_by('fk_student_id');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
