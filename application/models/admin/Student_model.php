@@ -36,7 +36,7 @@ class Student_model extends CI_Model
             'a.archive_status' => '1',
         ));
         $this->db->group_by('a.fk_student_id');
-        $this->db->order_by('b.student_name', 'ASC');
+        $this->db->order_by('a.fk_student_id', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
@@ -75,7 +75,7 @@ class Student_model extends CI_Model
             'a.archive_status' => '1',
         ));
         $this->db->group_by('a.fk_student_id');
-        $this->db->order_by('b.student_name', 'ASC');
+        $this->db->order_by('a.fk_student_id', 'ASC');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
