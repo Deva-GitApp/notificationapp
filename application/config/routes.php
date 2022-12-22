@@ -1,6 +1,6 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
   | -------------------------------------------------------------------------
@@ -56,6 +56,7 @@ $route['receipt'] = 'pages/receipt';
 $route['notification'] = 'pages/notification';
 $route['hallticket'] = 'pages/hallticket';
 $route['userenclogin/(:any)/(:any)'] = 'pages/userenclogin/$1/$2';
+$route['student-login/(:any)'] = 'autologin/userlogin/$1';
 $route['pdfpreview/(:any)'] = 'pages/generatepdf/$1';
 $route['hallticketpreview/(:any)'] = 'pages/hallticketpreview/$1';
 $route['404_override'] = '';

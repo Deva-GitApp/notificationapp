@@ -109,6 +109,26 @@ class Usersupport {
         return $alpha_num;
     }
 
+    public function autologin_encrypt_decrypt($action, $string) {
+        $output = false;
+
+        $encrypt_method = "AES-256-CBC";
+        $secret_key = 'gUkXp2s5v8y/B?E(H+MbPeShVmYq3t6w';
+        $secret_iv = '18158e89d55c4f7ca3c87997d5a694b0';
+
+        // hash
+        $key = hash('sha256', $secret_key);
+        $iv = substr(hash('sha256', $secret_iv), 0, 16);
+        if ($action == 'encrypt') {
+            $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+            $output = base64_encode($output);
+        } else if ($action == 'decrypt') {
+            $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
+        }
+
+        return $output;
+    }
+
     public function encrypt_decrypt($action, $string) {
         $output = false;
 
