@@ -1,5 +1,5 @@
 <div class="content-wrapper">
-    <section class="content-header">        
+    <section class="content-header">
         <h1>
             <?php echo $title; ?>
             <small><?php echo $sub_title; ?></small>
@@ -8,7 +8,7 @@
             <li><a href="<?php echo base_url('admin/dashboard'); ?>"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li class="active"><a href="<?php echo base_url('admin/department'); ?>/view">Department</a></li>
         </ol>
-    </section>              
+    </section>
     <!-- section start -->
     <section class="content">
         <div class="row">
@@ -18,26 +18,26 @@
 
                         <?php
                         if (validation_errors() != '' || $this->session->flashdata('db_error') != '') {
-                            ?> 
+                        ?>
                             <div class="form-group has-error">
-                                <label for="inputError" class="control-label">                                    
+                                <label for="inputError" class="control-label">
                                     <?php echo $this->session->flashdata('db_error'); ?>
                                     <?php echo validation_errors('<i class="fa fa-times-circle-o"></i> '); ?>
-                                </label>                            
+                                </label>
                             </div>
-                            <?php
+                        <?php
                         }
                         if ($this->session->flashdata('db_sucess') != '') {
-                            ?>
+                        ?>
                             <div class="form-group has-success">
                                 <label for="inputSuccess" class="control-label">
-                                    <i class="fa fa-check"></i> 
+                                    <i class="fa fa-check"></i>
                                     <?php echo $this->session->flashdata('db_sucess'); ?>
-                                </label>                                
+                                </label>
                             </div>
-                            <?php
+                        <?php
                         }
-                        ?>     
+                        ?>
                     </div>
                     <?php
                     $attributes = array('class' => 'form-horizontal', 'id' => 'frm_registration', 'name' => 'frm_registration');
@@ -62,12 +62,19 @@
                                     <label for="department_week" class="col-lg-2 control-label">Department Week</label>
                                     <div class="col-lg-4">
                                         <input type="text" class="form-control" id="department_week" placeholder="Department Week" name="department_week" value="<?php echo set_value('department_week'); ?>">
-                                        
+
                                     </div>
                                 </div>
-                                <div class="form-group">                                    
+                                <div class="form-group">
+                                    <label for="department_desc" class="col-lg-2 control-label">Description</label>
+                                    <div class="col-lg-4">
+                                        <textarea name="department_desc" class="form-control" id="department_desc" rows="3"><?php echo set_value('department_desc'); ?></textarea>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <div class="col-lg-offset-2 col-lg-4">
-                                        <input type="submit" name="btn_submit" id="btn_submit" class="btn btn-primary hvr-bounce-out" value="Add" >
+                                        <input type="submit" name="btn_submit" id="btn_submit" class="btn btn-primary hvr-bounce-out" value="Add">
                                         <input type="reset" name="btn_reset" id="btn_reset" class="btn btn-default hvr-bounce-out" value="Reset">
                                     </div>
                                 </div>
@@ -81,6 +88,6 @@
             </div>
         </div>
     </section>
-    <!-- section end-->                                
-</div>      
+    <!-- section end-->
+</div>
 <!-- content end -->

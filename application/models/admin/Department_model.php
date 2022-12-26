@@ -9,17 +9,21 @@ if (!defined('BASEPATH')) {
  *
  * @author rckumar
  */
-class Department_model extends CI_Model {
+class Department_model extends CI_Model
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
     }
 
-    public function add_department($department_name, $department_code, $department_week, $id) {
+    public function add_department($department_name, $department_code, $department_desc, $department_week, $id)
+    {
         $data = array(
             'department_name' => $department_name,
             'department_code' => $department_code,
             'department_week' => $department_week,
+            'department_desc' => $department_desc,
             'created_date' => date('Y-m-d H:i:s'),
             'created_by' => $id
         );
@@ -31,11 +35,13 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function edit_department($department_id, $department_name, $department_code, $department_week, $id) {
+    public function edit_department($department_id, $department_name, $department_code, $department_desc, $department_week, $id)
+    {
         $data = array(
             'department_name' => $department_name,
             'department_code' => $department_code,
             'department_week' => $department_week,
+            'department_desc' => $department_desc,
             'modified_by' => $id
         );
         $this->db->where(array(
@@ -49,7 +55,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function delete_department_by_id($department_id, $uid) {
+    public function delete_department_by_id($department_id, $uid)
+    {
         $data = array(
             'status' => '0',
             'archive_status' => '0',
@@ -66,7 +73,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function change_status_department_by_id($department_id, $uid) {
+    public function change_status_department_by_id($department_id, $uid)
+    {
         $data = array(
             'status' => '0',
             'modified_by' => $uid
@@ -82,7 +90,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function check_department_unique($department_id, $department_name) {
+    public function check_department_unique($department_id, $department_name)
+    {
         $this->db->select('department_id');
         $this->db->from('department');
         $this->db->where(array(
@@ -99,7 +108,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function get_department_by_id($department_id) {
+    public function get_department_by_id($department_id)
+    {
         $slt_ary = array(
             'department_id',
             'department_name',
@@ -126,12 +136,13 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function allposts_count() {
+    public function allposts_count()
+    {
         $slt_ary = array(
             'department_id'
         );
         $where_ary = array(
-//            'status' => '1',
+            //            'status' => '1',
             'archive_status' => '1',
         );
         $this->db->select($slt_ary);
@@ -145,7 +156,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function allposts($limit, $start, $order, $dir) {
+    public function allposts($limit, $start, $order, $dir)
+    {
         $slt_ary = array(
             'department_id',
             'department_name',
@@ -158,7 +170,7 @@ class Department_model extends CI_Model {
             'modified_date',
         );
         $where_ary = array(
-//            'status' => '1',
+            //            'status' => '1',
             'archive_status' => '1',
         );
         $this->db->select($slt_ary);
@@ -174,7 +186,8 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function posts_search($limit, $start, $search, $order, $dir) {
+    public function posts_search($limit, $start, $search, $order, $dir)
+    {
         $slt_ary = array(
             'department_id',
             'department_name',
@@ -187,7 +200,7 @@ class Department_model extends CI_Model {
             'modified_date',
         );
         $where_ary = array(
-//            'status' => '1',
+            //            'status' => '1',
             'archive_status' => '1',
         );
         $this->db->select($slt_ary);
@@ -211,12 +224,13 @@ class Department_model extends CI_Model {
         }
     }
 
-    public function posts_search_count($search) {
+    public function posts_search_count($search)
+    {
         $slt_ary = array(
             'department_id',
         );
         $where_ary = array(
-//            'status' => '1',
+            //            'status' => '1',
             'archive_status' => '1',
         );
         $this->db->select($slt_ary);

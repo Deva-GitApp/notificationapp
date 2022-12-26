@@ -1,15 +1,17 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * Description of Department
  *
  * @author rckumar
  */
-class Department extends CI_Controller {
+class Department extends CI_Controller
+{
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $data = array(
             'base_model',
@@ -25,11 +27,13 @@ class Department extends CI_Controller {
         $this->hashids = new Hashids\Hashids('the sriher department error');
     }
 
-    public function index() {
+    public function index()
+    {
         redirect('admin/department/create', 'refresh');
     }
 
-    public function view() {
+    public function view()
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
@@ -53,10 +57,10 @@ class Department extends CI_Controller {
             $data['loadcss'] = array(
                 'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css',
                 'bower_components/datatables.net/datatabletools/css/dataTables.tableTools.css',
-//                'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css',
-//                'bower_components/datatables.net/datatabletools/css/dataTables.tableTools.css',
-//                'bower_components/datatable.net.btns/css/jquery.dataTables.min.css',
-//                'bower_components/datatable.net.btns/css/buttons.dataTables.min.css',
+                //                'bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css',
+                //                'bower_components/datatables.net/datatabletools/css/dataTables.tableTools.css',
+                //                'bower_components/datatable.net.btns/css/jquery.dataTables.min.css',
+                //                'bower_components/datatable.net.btns/css/buttons.dataTables.min.css',
             );
             $data['loadjs'] = array(
                 'bower_components/datatables.net/js/jquery.dataTables.min.js',
@@ -68,9 +72,9 @@ class Department extends CI_Controller {
                 'bower_components/datatable.net.btns/js/buttons.html5.min.js',
             );
 
-//            $data['department_list'] = $this->department_model->get_all_department();
-//            $data['role_type_list'] = $this->department_model->get_all_role_type();
-//            $data['department_list'] = $this->department_model->get_all_departments();
+            //            $data['department_list'] = $this->department_model->get_all_department();
+            //            $data['role_type_list'] = $this->department_model->get_all_role_type();
+            //            $data['department_list'] = $this->department_model->get_all_departments();
             $this->load->view('admin/includes/header', $data);
             $this->load->view('admin/includes/admin_menu', $data);
             $this->load->view('admin/department/view_department', $data);
@@ -80,7 +84,8 @@ class Department extends CI_Controller {
         }
     }
 
-    public function create() {
+    public function create()
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
@@ -95,23 +100,21 @@ class Department extends CI_Controller {
 
             /* dynamic js */
             $data['loadcss'] = array(
-//                'bower_components/select2/dist/css/select2.min.css',
-//                'bower_components/file-input/bootstrap-fileinput-master/css/fileinput.min.css',
-                    /*  'lib/imagere-size/css/imgareaselect-animated.css' */
-            );
+                //                'bower_components/select2/dist/css/select2.min.css',
+                //                'bower_components/file-input/bootstrap-fileinput-master/css/fileinput.min.css',
+                /*  'lib/imagere-size/css/imgareaselect-animated.css' */);
             $data['loadjs'] = array(
                 'bower_components/select2/dist/js/select2.full.min.js',
                 'bower_components/jquery-validation/dist/jquery.validate.min.js',
-                'dist/js/form_validation/department.js',
+                // 'dist/js/form_validation/department.js',
             );
-//            $data['department_list'] = $this->department_model->get_all_department();
-//            $data['department_list'] = $this->department_model->get_all_departments();
-//            $data['role_type_list'] = $this->department_model->get_all_role_type();
+
 
             $this->load->library('form_validation');
             $this->form_validation->set_rules('department_name', 'Department Name', 'trim|required|is_unique[department.department_name]');
             $this->form_validation->set_rules('department_code', 'Department Code', 'trim|required');
             $this->form_validation->set_rules('department_week', 'Department Week', 'trim|required|numeric');
+            $this->form_validation->set_rules('department_desc', 'Department Description', 'trim');
             $this->form_validation->set_message('is_unique', 'This %s already exists.');
 
             if ($this->form_validation->run() == FALSE) {
@@ -123,7 +126,8 @@ class Department extends CI_Controller {
                 $department_name = $this->input->post('department_name');
                 $department_code = $this->input->post('department_code');
                 $department_week = $this->input->post('department_week');
-                $result = $this->department_model->add_department($department_name, $department_code, $department_week, $session_data['id']);
+                $department_desc = $this->input->post('department_desc');
+                $result = $this->department_model->add_department($department_name, $department_code, $department_desc, $department_week, $session_data['id']);
 
                 if ($result) {
                     $this->session->set_flashdata('db_sucess', 'New Department Name is Created Successfully.');
@@ -138,7 +142,8 @@ class Department extends CI_Controller {
         }
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
@@ -151,22 +156,21 @@ class Department extends CI_Controller {
             $data['sub_title'] = 'Edit';
             /* dynamic js */
             $data['loadcss'] = array(
-//                'bower_components/select2/dist/css/select2.min.css',
-//                'bower_components/file-input/bootstrap-fileinput-master/css/fileinput.min.css',
-                    /*  'lib/imagere-size/css/imgareaselect-animated.css' */
-            );
+                //                'bower_components/select2/dist/css/select2.min.css',
+                //                'bower_components/file-input/bootstrap-fileinput-master/css/fileinput.min.css',
+                /*  'lib/imagere-size/css/imgareaselect-animated.css' */);
             $data['loadjs'] = array(
-//                'bower_components/select2/dist/js/select2.full.min.js',
+                //                'bower_components/select2/dist/js/select2.full.min.js',
                 'bower_components/jquery-validation/dist/jquery.validate.min.js',
-//                'bower_components/file-input/bootstrap-fileinput-master/js/fileinput.js',
-//                'bower_components/autocomplete/typeahead.js',
-                'dist/js/form_validation/department.js',
+                //                'bower_components/file-input/bootstrap-fileinput-master/js/fileinput.js',
+                //                'bower_components/autocomplete/typeahead.js',
+                //'dist/js/form_validation/department.js',
             );
             /* decode url */
             $numbers = $this->hashids->decode($id);
-//            print_r($numbers);
+            //            print_r($numbers);
             $data['department_data'] = $this->department_model->get_department_by_id($numbers[0]);
-//            var_dump($data['department_data']);
+            //            var_dump($data['department_data']);
             //$this->output->enable_profiler(TRUE);
             //callback_slt_check
             $this->load->library('form_validation');
@@ -204,7 +208,8 @@ class Department extends CI_Controller {
         }
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
@@ -232,7 +237,8 @@ class Department extends CI_Controller {
         }
     }
 
-    public function status($id) {
+    public function status($id)
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $uid = $session_data['id'];
@@ -263,7 +269,8 @@ class Department extends CI_Controller {
         }
     }
 
-    public function slt_check($str) {
+    public function slt_check($str)
+    {
         if ($str == '0') {
             $this->form_validation->set_message('slt_check', 'Select the {field} ');
             return FALSE;
@@ -272,17 +279,13 @@ class Department extends CI_Controller {
         }
     }
 
-    public function ajax_with_datatable() {
+    public function ajax_with_datatable()
+    {
         if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
             $session_data = $this->session->userdata('srihertemp_admin_logged_in');
             $page_name = $this->router->fetch_class();
             $per_res = permission_view_check($page_name, $session_data);
             $uid = $session_data['id'];
-            if ($session_data['role_type_name'] == "Doctor") {
-                $doctor_id = get_docotor_id($uid);
-            } else {
-                $doctor_id = FALSE;
-            }
 
 
             $columns = array(
@@ -357,5 +360,4 @@ class Department extends CI_Controller {
             redirect(base_url('admin'), 'refresh');
         }
     }
-
 }

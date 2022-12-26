@@ -3,6 +3,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 use Spipu\Html2Pdf\Html2Pdf;
+use Spipu\Html2Pdf\Tag\Html\Em;
 
 //use Hashids\Hashids;
 /**
@@ -55,7 +56,24 @@ class Pages extends CI_Controller
         if ($this->session->has_userdata('srihertemp_user_logged_in') == true) {
             $user_session_data = $this->session->userdata('srihertemp_user_logged_in');
             $student_id = $user_session_data['student_id'];
-            $data['hallticket_details'] = $this->pages_model->get_hallticket_details($student_id);
+            $user_session_details = $data['user_session_details'] = $this->pages_model->get_session_details($student_id);
+            if (!empty($user_session_details)) {
+                $user_session_details = array_column($user_session_details, 'mysession');
+                $hallticket_ary = array();
+                foreach ($user_session_details as $session_details) {
+                    $hallticket_details = $this->pages_model->get_hallticket_details($student_id, $session_details);
+                    if (!empty($hallticket_details)) {
+                        array_push($hallticket_ary, $hallticket_details);
+                    }
+                }
+            }
+            /* var_dump($user_session_details);
+            var_dump($hallticket_ary); */
+
+            $data['hallticket_details_ary']  = !empty($hallticket_ary);
+            $data['user_session_details'] = !empty($user_session_details) ? $user_session_details : '';
+
+
             $this->load->view('includes/header', $data);
             $this->load->view('includes/menu', $data);
             $this->load->view('pages/studenthallticket', $data);
@@ -69,12 +87,17 @@ class Pages extends CI_Controller
     {
         if ($this->session->has_userdata('srihertemp_user_logged_in') == true) {
             $user_session_data = $this->session->userdata('srihertemp_user_logged_in');
-            $student_id = $this->usersupport->encrypt_decrypt('decrypt', $id);
-            $data['hallticket_details'] = $this->pages_model->get_hallticket_details($student_id);
-            $this->load->view('includes/header', $data);
+            $student_details = $this->usersupport->encrypt_decrypt('decrypt', $id);
+            $student_ary = explode('$',  $student_details);
+            $student_id = $student_ary[0];
+            $session_id = $student_ary[1];
+            /* var_dump($student_ary); */
+
+            $data['hallticket_details'] = $this->pages_model->get_hallticket_details($student_id, $session_id);
+            //  $this->load->view('includes/header', $data);
             //$this->load->view('includes/menu', $data);
             $this->load->view('pages/studenthallticketpreview', $data);
-            $this->load->view('includes/footer', $data);
+            //  $this->load->view('includes/footer', $data);
         } else {
             redirect(base_url(), 'refresh');
         }

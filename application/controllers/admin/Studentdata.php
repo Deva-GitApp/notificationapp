@@ -341,4 +341,7 @@ class studentdata extends CI_Controller
             }
         }
     }
+
+
+    
 }

@@ -98,19 +98,20 @@ class Pages_model extends CI_Model
         }
     }
 
-    public function get_hallticket_details($student_id)
+    public function get_hallticket_details($student_id, $session_name)
     {
         $slt_ary = array(
             'a.student_id',
             'a.student_name',
             'a.student_barcode',
             'a.course_name',
+            'a.student_dob as dob',
             'a.batch',
             'a.hall_ticket_preview_status',
             'a.status',
             'a.archive_status',
             'b.studenthallticket_id',
-            'b.dob',
+            //'b.dob',
             'b.course_code',
             'b.halltcketcourse_name',
             'b.examdate',
@@ -131,7 +132,28 @@ class Pages_model extends CI_Model
             'a.status' => '1',
             'a.archive_status' => '1',
             'a.student_id' => $student_id,
+            'b.mysession' => $session_name,
         ));
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
+        } else {
+            return FALSE;
+        }
+    }
+    public function get_session_details($student_id)
+    {
+        $slt_ary = array(
+            'mysession',
+        );
+        $this->db->select($slt_ary);
+        $this->db->from('studenthallticket');
+        $this->db->where(array(
+            'status' => '1',
+            'archive_status' => '1',
+            'fk_student_id' => $student_id,
+        ));
+        $this->db->group_by('mysession');
         $query = $this->db->get();
         if ($query->num_rows() > 0) {
             return $query->result_array();
