@@ -16,6 +16,7 @@ class Studenthallticket extends CI_Controller
         $data = array(
             'base_model',
             'admin/student_model',
+            'pages_model',
         );
 
         $lib_ary = array(
@@ -92,7 +93,7 @@ class Studenthallticket extends CI_Controller
                 if (!empty($student_list_toremove)) {
                     $resremove =  $this->student_model->update_hall_preview_status_remove($student_list_toremove);
                 }
-                
+
                 $res = $this->student_model->update_hall_preview_status($student_id_ary, $student_list_toremove);
                 if ($res || $resremove) {
                     $this->session->set_flashdata('db_sucess', 'Student Permission Updated');
@@ -329,6 +330,51 @@ class Studenthallticket extends CI_Controller
             } else {
                 echo false;
             }
+        }
+    }
+    public function studenthallticketdetails($id)
+    {
+        if ($this->session->userdata('srihertemp_admin_logged_in') == true) {
+            $session_data = $this->session->userdata('srihertemp_admin_logged_in');
+            $uid = $session_data['id'];
+            $email = $session_data['email'];
+            $role_id = $session_data['role'];
+            $role = $this->base_model->get_role_name_by_id($role_id);
+
+            $data['ss_data'] = $session_data;
+            $data['title'] = 'Hall Ticket Details';
+            $data['sub_title'] = 'Edit';
+            /* dynamic js */
+            $data['loadcss'] = array();
+
+            $data['loadjs'] = array(
+                'bower_components/jquery-validation/dist/jquery.validate.min.js',
+
+            );
+            $numbers = $this->hashids->decode($id);
+            $student_id = $numbers[0];
+            $user_session_details = $data['user_session_details'] = $this->pages_model->get_session_details($student_id);
+            if (!empty($user_session_details)) {
+                $user_session_details = array_column($user_session_details, 'mysession');
+                $hallticket_ary = array();
+                foreach ($user_session_details as $session_details) {
+                    $hallticket_details = $this->pages_model->get_hallticket_details($student_id, $session_details);
+                    if (!empty($hallticket_details)) {
+                        array_push($hallticket_ary, $hallticket_details);
+                    }
+                }
+            }
+
+            $data['hallticket_details_ary']  = !empty($hallticket_ary) ? $hallticket_ary : '';
+            $data['user_session_details'] = !empty($user_session_details) ? $user_session_details : '';
+
+
+            $this->load->view('includes/header', $data);
+            /* $this->load->view('admin/includes/admin_menu', $data); */
+            $this->load->view('admin/studenthallticket/hallticketdetails', $data);
+            $this->load->view('includes/footer', $data);
+        } else {
+            redirect(base_url('admin'), 'refresh');
         }
     }
 }

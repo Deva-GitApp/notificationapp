@@ -424,7 +424,9 @@ class Student_model extends CI_Model
 
     public function check_hallticket_fr_student($student_barcode)
     {
-        $this->db->select('*');
+        $slt_ary = array();
+
+        $this->db->select('student_id');
         $this->db->from('students');
         $this->db->where(array(
             'student_barcode' => $student_barcode,

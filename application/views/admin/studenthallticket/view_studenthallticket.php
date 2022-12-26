@@ -59,6 +59,7 @@ $hashids = new Hashids\Hashids('the sriher studenthallticket error');
                             <th>Course Code</th>
                             <th>Exam Date & Time</th>
                             <th>Created Date</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,9 +77,10 @@ $hashids = new Hashids\Hashids('the sriher studenthallticket error');
                                     <td><?php echo date('d-M-Y', strtotime($list['examdate'])) . ' - ' . $list['examtime']; ?></td>
                                     <td>
                                         <?php echo date('d-M-Y H:i', strtotime($list['created_date'])); ?>
-
                                     </td>
-
+                                    <td>
+                                        <a class="btn btn-info" target="_blank" href="<?= base_url('admin/studenthallticket/studenthallticketdetails'); ?>/<?= $this->hashids->encode($list['student_id'], dateintval('d'), dateintval('m'), dateintval('y')) ?>">View Details</a>
+                                    </td>
                                 </tr>
                         <?php
                                 $i++;
